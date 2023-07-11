@@ -1,9 +1,12 @@
-import aiohttp
 import logging
 from logging import Logger
 
+import aiohttp
+
 from .exceptions import (
-    RippleConnectionError
+    RippleAuthenticationError,
+    RippleConnectionError,
+    RippleDevicesError,
 )
 
 logger: Logger = logging.getLogger(__package__)
@@ -74,4 +77,12 @@ class RippleAPI:
             if response.status != 200:
                 raise RippleConnectionError("Error sending request")
 
-            return await response.json()
+            response = await response.json()
+
+            if "error" in response:
+                raise RippleAuthenticationError("Invalid API Key")
+
+            if len(response["generation_assets"] < 1):
+                raise RippleDevicesError("No generation assets found")
+
+            return response
