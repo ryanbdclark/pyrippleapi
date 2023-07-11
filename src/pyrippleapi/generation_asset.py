@@ -22,7 +22,7 @@ class GenerationAsset:
     """
 
     def __init__(
-        self, api: RippleAPI, data: dict[str : Union[str, int, bool, list]]
+        self, api: RippleAPI, data: dict[str : Union[str, int, bool, list]], email: str
     ) -> None:
         """
         Constructs an Ripple generation asset object representing the generation asset
@@ -33,6 +33,7 @@ class GenerationAsset:
         data (dict):Data returned from the Ripple API showing the details of the generation assets
         """
         self._api = api
+        self._email = email
         self._name = data["name"]
         self._type = data["type"]
         self._status = data["status"]
@@ -50,6 +51,10 @@ class GenerationAsset:
 
         self._latest_telemetry = {}
         self._generation_data = {}
+
+    @property
+    def email(self) -> str:
+        return self._email
 
     @property
     def generation_unit(self) -> str:
@@ -99,6 +104,17 @@ class GenerationAsset:
     def generation_data(self) -> dict[str:str]:
         return self._generation_data
 
+    def update_asset_info(self, data) -> None:
+        self._status = data["status"]
+        self._member_capacity = data["member_capacity"]
+        self._member_capacity_units = data["member_capacity_units"]
+        self._member_expected_annual_generation = data[
+            "member_expected_annual_generation"
+        ]
+        self._member_expected_annual_generation_units = data[
+            "member_expected_annual_generation_units"
+        ]
+
     def get_telemetry(self, data) -> None:
         self._latest_telemetry = data["latest_telemetry"]
 
@@ -144,11 +160,12 @@ class GenerationAsset:
 
         for asset in data:
             if asset["name"] == self._name:
-                generation_data = asset["generation"]
+                generation_data = asset
                 break
 
-        self.get_telemetry(generation_data)
-        self.get_generation(generation_data)
+        self.update_asset_info(generation_data)
+        self.get_telemetry(generation_data["generation"])
+        self.get_generation(generation_data["generation"])
 
         return {
             "telemetry": self._latest_telemetry,

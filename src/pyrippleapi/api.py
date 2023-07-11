@@ -82,7 +82,7 @@ class RippleAPI:
             if "error" in response:
                 raise RippleAuthenticationError("Invalid API Key")
 
-            if len(response["generation_assets"] < 1):
+            if len(response["generation_assets"])<1:
                 raise RippleDevicesError("No generation assets found")
 
             return response

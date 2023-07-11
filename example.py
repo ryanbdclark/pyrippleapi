@@ -13,7 +13,7 @@ async def run():
     data = await api.request()
     # print(devices)
     assets = {
-        asset["name"]: GenerationAsset(api, asset)
+        asset["name"]: GenerationAsset(api, asset, data['email'])
         for asset in data["generation_assets"]
     }
     for asset in assets.values():
