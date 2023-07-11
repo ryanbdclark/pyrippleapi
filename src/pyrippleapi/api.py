@@ -71,8 +71,15 @@ class RippleAPI:
         dict: Dictionary containing the response
         """
 
+        headers = {
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+            "Accept-Encoding": "gzip, deflate, br",
+            "Accept-Language": "en-GB,en;q=0.9,en-US;q=0.8",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.67",
+        }
+
         async with self.session.request(
-            "GET", self._api_url + self._auth_token
+            "GET", self._api_url + self._auth_token, headers=headers
         ) as response:
             if response.status != 200:
                 raise RippleConnectionError("Error sending request")
@@ -82,7 +89,7 @@ class RippleAPI:
             if "error" in response:
                 raise RippleAuthenticationError("Invalid API Key")
 
-            if len(response["generation_assets"])<1:
+            if len(response["generation_assets"]) < 1:
                 raise RippleDevicesError("No generation assets found")
 
             return response
