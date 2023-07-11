@@ -104,7 +104,7 @@ class GenerationAsset:
     def generation_data(self) -> dict[str:str]:
         return self._generation_data
 
-    def update_asset_info(self, data) -> None:
+    async def update_asset_info(self, data) -> None:
         self._status = data["status"]
         self._member_capacity = data["member_capacity"]
         self._member_capacity_units = data["member_capacity_units"]
@@ -115,7 +115,7 @@ class GenerationAsset:
             "member_expected_annual_generation_units"
         ]
 
-    def get_telemetry(self, data) -> None:
+    async def get_telemetry(self, data) -> None:
         self._latest_telemetry = data["latest_telemetry"]
 
         self._latest_telemetry["timestamp"] = datetime.datetime.strptime(
@@ -123,17 +123,25 @@ class GenerationAsset:
             "%Y-%m-%dT%H:%M:%SZ",
         ).strftime("%Y/%m/%d %H:%M:%S")
 
-    def get_generation(self, data) -> None:
-        self._generation_data["latest"] = data["latest"]
-        self._generation_data["today"] = data["today"]
-        self._generation_data["yesterday"] = data["yesterday"]
-        self._generation_data["this_week"] = data["this_week"]
-        self._generation_data["last_week"] = data["last_week"]
-        self._generation_data["this_month"] = data["this_month"]
-        self._generation_data["last_month"] = data["last_month"]
-        self._generation_data["this_year"] = data["this_year"]
-        self._generation_data["last_year"] = data["last_year"]
-        self._generation_data["total"] = data["total"]
+    async def get_generation(self, data) -> None:
+        for time_scale in [
+            "today",
+            "yesterday",
+            "this_week",
+            "last_week",
+            "this_month",
+            "last_month",
+            "this_year",
+            "last_year",
+            "total",
+        ]:
+            self._generation_data[time_scale + "_earned"] = data[time_scale]["earned"]
+            self._generation_data[time_scale + "_generated"] = data[time_scale][
+                "generated"
+            ]
+
+        self._generation_data["latest_earned"] = data["latest"]["estimated_savings"]
+        self._generation_data["latest_generated"] = data["latest"]["generation"]
 
     async def update_data(
         self,
@@ -163,9 +171,9 @@ class GenerationAsset:
                 generation_data = asset
                 break
 
-        self.update_asset_info(generation_data)
-        self.get_telemetry(generation_data["generation"])
-        self.get_generation(generation_data["generation"])
+        await self.update_asset_info(generation_data)
+        await self.get_telemetry(generation_data["generation"])
+        await self.get_generation(generation_data["generation"])
 
         return {
             "telemetry": self._latest_telemetry,

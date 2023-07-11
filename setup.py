@@ -8,7 +8,7 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 
 setup(
     name="pyrippleapi",
-    version="2023.7.2",
+    version="2023.7.3",
     description="Ripple energy api wrapper",
     long_description=long_description,
     long_description_content_type="text/markdown",
