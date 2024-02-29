@@ -10,8 +10,8 @@ async def run():
         data = json.load(file)
     api = RippleAPI(data["auth_token"])
 
-    data = await api.request()
-    # print(devices)
+    data = await api.request(assets=[])
+    print(data)
     assets = {
         asset["name"]: GenerationAsset(api, asset, data['email'])
         for asset in data["generation_assets"]

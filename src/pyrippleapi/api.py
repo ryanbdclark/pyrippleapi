@@ -62,7 +62,7 @@ class RippleAPI:
         if self.session:
             await self.session.close()
 
-    async def request(self) -> dict:
+    async def request(self, assets: list[str] = []) -> dict:
         """
         Method for calling the Ripple API
 
@@ -91,5 +91,9 @@ class RippleAPI:
 
             if len(response["generation_assets"]) < 1:
                 raise RippleDevicesError("No generation assets found")
+
+            for asset in enumerate(response["generation_assets"]):
+                if asset[1]["name"] not in assets:
+                    del response["generation_assets"][asset[0]]
 
             return response

@@ -155,7 +155,7 @@ class GenerationAsset:
         (dict):Dictionary containing two dictionaries, one with the telemetry data from the API and another with the generation_data from the api
         """
         logging.info(f"Updating properties for device {self.name}")
-        data = await self._api.request()
+        data = await self._api.request(assets=[self.name])
 
         data = data["generation_assets"]
 
