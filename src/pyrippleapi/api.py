@@ -77,7 +77,6 @@ class RippleAPI:
             "Accept-Language": "en-GB,en;q=0.9,en-US;q=0.8",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.67",
         }
-
         async with self.session.request(
             "GET", self._api_url + self._auth_token, headers=headers
         ) as response:
@@ -91,9 +90,12 @@ class RippleAPI:
 
             if len(response["generation_assets"]) < 1:
                 raise RippleDevicesError("No generation assets found")
+        
+            new_assets = []
+            for asset in response["generation_assets"]:
+                if asset["name"] in assets:
+                    new_assets.append(asset)
 
-            for asset in enumerate(response["generation_assets"]):
-                if asset[1]["name"] not in assets:
-                    del response["generation_assets"][asset[0]]
+            response["generation_assets"]=new_assets
 
             return response

@@ -117,11 +117,13 @@ class GenerationAsset:
 
     async def get_telemetry(self, data) -> None:
         self._latest_telemetry = data["latest_telemetry"]
-
-        self._latest_telemetry["timestamp"] = datetime.datetime.strptime(
-            self._latest_telemetry["timestamp"],
-            "%Y-%m-%dT%H:%M:%SZ",
-        ).strftime("%Y/%m/%d %H:%M:%S")
+        if "timestamp" in self._latest_telemetry:
+            self._latest_telemetry["timestamp"] = datetime.datetime.strptime(
+                self._latest_telemetry["timestamp"],
+                "%Y-%m-%dT%H:%M:%SZ",
+            ).strftime("%Y/%m/%d %H:%M:%S")
+        else:
+            self._latest_telemetry["timestamp"] = "0001/01/01 00:00:00"
 
     async def get_generation(self, data) -> None:
         for time_scale in [
