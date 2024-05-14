@@ -141,9 +141,9 @@ class GenerationAsset:
             self._generation_data[time_scale + "_generated"] = data[time_scale][
                 "generated"
             ]
-
-        self._generation_data["latest_earned"] = data["latest"]["estimated_savings"]
-        self._generation_data["latest_generated"] = data["latest"]["generation"]
+        if data["latest"]:
+            self._generation_data["latest_earned"] = data["latest"]["estimated_savings"]
+            self._generation_data["latest_generated"] = data["latest"]["generation"]
 
     async def update_data(
         self,
