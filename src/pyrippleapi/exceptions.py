@@ -10,3 +10,6 @@ class RippleDevicesError(RippleError):
 
 class RippleAuthenticationError(RippleError):
     """When an authentication token is invalid"""
+
+class RippleAuthenticationError(RippleError):
+    """Unknown error"""

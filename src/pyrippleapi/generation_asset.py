@@ -149,8 +149,7 @@ class GenerationAsset:
         self,
     ) -> dict:
         """
-        Calls the Ripple api to update the properties and then returns the raw response dict, the formatted dict from
-        normalise_properties and any new api tokens if they have changed
+        Calls the Ripple api to update the properties and then returns the telemetry data and generation data.
 
         Returns
         -------
