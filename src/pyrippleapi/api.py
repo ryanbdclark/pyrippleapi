@@ -7,7 +7,7 @@ from .exceptions import (
     RippleAuthenticationError,
     RippleConnectionError,
     RippleDevicesError,
-    RippleError
+    RippleError,
 )
 
 logger: Logger = logging.getLogger(__package__)
@@ -79,26 +79,26 @@ class RippleAPI:
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.67",
         }
         async with self.session.request(
-            "GET", self._api_url + self._auth_token, headers=headers, ssl=False
+            "GET", self._api_url + self._auth_token, headers=headers
         ) as response:
             if response.status != 200:
                 raise RippleConnectionError("Error sending request")
 
             response = await response.json()
 
-            if response == {'error': 'Not authenticated'}:
+            if response == {"error": "Not authenticated"}:
                 raise RippleAuthenticationError("Invalid API Key")
-            elif 'error' in response:
+            elif "error" in response:
                 raise RippleError
 
             if len(response["generation_assets"]) < 1:
                 raise RippleDevicesError("No generation assets found")
-        
+
             new_assets = []
             for asset in response["generation_assets"]:
                 if asset["name"] in assets:
                     new_assets.append(asset)
 
-            response["generation_assets"]=new_assets
+            response["generation_assets"] = new_assets
 
             return response
